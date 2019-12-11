@@ -16,7 +16,9 @@ namespace HTTPServer
         public Server(int portNumber, string redirectionMatrixPath)
         {
             //TODO: call this.LoadRedirectionRules passing redirectionMatrixPath to it
+            LoadRedirectionRules(redirectionMatrixPath);
             //TODO: initialize this.serverSocket
+            serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
         public void StartServer()
@@ -107,11 +109,20 @@ namespace HTTPServer
             try
             {
                 // TODO: using the filepath paramter read the redirection rules from file 
-                // then fill Configuration.RedirectionRules dictionary 
+                string[] rules = File.ReadAllLines(filePath);
+                // then fill Configuration.RedirectionRules dictionary
+                Configuration.RedirectionRules = new Dictionary<string, string>();
+                foreach(string rule in rules)
+                {
+                    string[] r = rule.Split(',');
+                    Configuration.RedirectionRules[r[0]] = r[1];
+                    //Console.WriteLine(r[0]+" "+ Configuration.RedirectionRules[r[0]]);
+                }
+                
             }
             catch (Exception ex)
             {
-                // TODO: log exception using Logger class
+                Console.WriteLine(ex.Message);
                 Environment.Exit(1);
             }
         }
