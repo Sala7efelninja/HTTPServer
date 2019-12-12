@@ -12,55 +12,67 @@ namespace HTTPServer
     class Server
     {
         Socket serverSocket;
-
+        int port;
         public Server(int portNumber, string redirectionMatrixPath)
         {
-            //TODO: call this.LoadRedirectionRules passing redirectionMatrixPath to it
+            //FTODO: call this.LoadRedirectionRules passing redirectionMatrixPath to it
             LoadRedirectionRules(redirectionMatrixPath);
-            //TODO: initialize this.serverSocket
+            //FTODO: initialize this.serverSocket
             serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            port = portNumber;
+            IPEndPoint iep = new IPEndPoint(IPAddress.Any, port);
+            serverSocket.Bind(iep);
+            
         }
 
         public void StartServer()
         {
-            // TODO: Listen to connections, with large backlog.
-
-            // TODO: Accept connections in while loop and start a thread for each connection on function "Handle Connection"
+            //FTODO: Listen to connections, with large backlog.
+            serverSocket.Listen(1000);
+            //FTODO: Accept connections in while loop and start a thread for each connection on function "Handle Connection"
             while (true)
             {
-                //TODO: accept connections and start thread for each accepted connection.
-
+                //FTODO: accept connections and start thread for each accepted connection.
+                Socket client =serverSocket.Accept();
+                Thread thread = new Thread(new ParameterizedThreadStart(HandleConnection));
+                thread.Start(client);
             }
         }
 
         public void HandleConnection(object obj)
         {
-            // TODO: Create client socket 
+            //FTODO: Create client socket 
             // set client socket ReceiveTimeout = 0 to indicate an infinite time-out period
-            
-            // TODO: receive requests in while true until remote client closes the socket.
+            Socket client = (Socket)obj;
+            client.ReceiveTimeout = 0;
+            //FTODO: receive requests in while true until remote client closes the socket.
             while (true)
             {
                 try
                 {
-                    // TODO: Receive request
-
-                    // TODO: break the while loop if receivedLen==0
-
-                    // TODO: Create a Request object using received request string
-
-                    // TODO: Call HandleRequest Method that returns the response
-
+                    byte[] buffer=new byte[1024*1024];
+                    //FTODO: Receive request
+                    int len=client.Receive(buffer);
+                    //FTODO: break the while loop if receivedLen==0
+                    if (len == 0)
+                        break;
+                    //FTODO: Create a Request object using received request string
+                    Request request = new Request(ASCIIEncoding.ASCII.GetString(buffer));
+                    //FTODO: Call HandleRequest Method that returns the response
+                    Response response=HandleRequest(request);
                     // TODO: Send Response back to client
 
                 }
                 catch (Exception ex)
                 {
-                    // TODO: log exception using Logger class
+                    //FTODO: log exception using Logger class
+                    Logger.LogException(ex);
+                    break;//????????????????????????????
                 }
             }
 
-            // TODO: close client socket
+            //FTODO: close client socket
+            client.Close();
         }
 
         Response HandleRequest(Request request)
@@ -108,7 +120,7 @@ namespace HTTPServer
         {
             try
             {
-                // TODO: using the filepath paramter read the redirection rules from file 
+                //FTODO: using the filepath paramter read the redirection rules from file 
                 string[] rules = File.ReadAllLines(filePath);
                 // then fill Configuration.RedirectionRules dictionary
                 Configuration.RedirectionRules = new Dictionary<string, string>();

@@ -11,10 +11,13 @@ namespace HTTPServer
         static StreamWriter sr = new StreamWriter("log.txt");
         public static void LogException(Exception ex)
         {
-            // TODO: Create log file named log.txt to log exception details in it
+            //FTODO: Create log file named log.txt to log exception details in it
             //Datetime:
             //message:
             // for each exception write its details associated with datetime 
+            sr.WriteLine("Datetime: {0} {1}", DateTime.Now.ToLocalTime());
+            sr.WriteLine("Message: {0}", ex.Message);
+            
         }
     }
 }
