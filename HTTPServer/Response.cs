@@ -18,6 +18,7 @@ namespace HTTPServer
 
     class Response
     {
+        string br="/r/n";
         string responseString;
         public string ResponseString
         {
@@ -30,12 +31,19 @@ namespace HTTPServer
         List<string> headerLines = new List<string>();
         public Response(StatusCode code, string contentType, string content, string redirectoinPath)
         {
-            throw new NotImplementedException();
-            // TODO: Add headlines (Content-Type, Content-Length,Date, [location if there is redirection])
+            //FTODO: Add headlines (Content-Type, Content-Length,Date, [location if there is redirection])
+            headerLines.Add("Content-Type: " +contentType);
+            headerLines.Add("Conent-Length: "+ content.Length);
+            headerLines.Add("Date: "+ DateTime.Now.ToLocalTime());
+            if(redirectoinPath.Length!=0)
+                headerLines.Add("location: "+redirectoinPath);
 
 
-            // TODO: Create the request string
-
+            //FTODO: Create the request string
+            responseString =GetStatusLine(code) + br;
+            foreach (string header in headerLines)
+                responseString += header + br;
+            responseString += br + content;
         }
 
         private string GetStatusLine(StatusCode code)
