@@ -16,8 +16,8 @@ namespace HTTPServer
             // 1) Make server object on port 1000
             Console.WriteLine(DateTime.Now.ToLocalTime());
             Server server = new Server(10000, "redirectionRules.txt");
-            // 2) Start Server
-            //server.StartServer();
+            //2) Start Server
+            server.StartServer();
         }
 
         static void CreateRedirectionRulesFile()

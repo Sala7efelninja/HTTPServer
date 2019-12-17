@@ -82,6 +82,9 @@ namespace HTTPServer
             
             string content;
             string defaultPageName;
+            string contentType="text/html";
+            string physicalPath;
+            Response response;
             
             try
             {
@@ -89,26 +92,47 @@ namespace HTTPServer
                 if(request.ParseRequest()==false)
                 {
                    defaultPageName = Configuration.BadRequestDefaultPageName;
+                    content = LoadDefaultPage(defaultPageName);
+                    response = new Response(StatusCode.BadRequest,contentType,content,string.Empty);
+                    return response;
                 }
                 //TODO: map the relativeURI in request to get the physical path of the resource.
                 
                 //TODO: check for redirect
-                LoadRedirectionRules();
-                string redirectionPath = GetRedirectionPagePathIFExist(request.relativeURI);
+                string redirectUri = GetRedirectionPagePathIFExist(request.relativeURI);
+                if(redirectUri != string.Empty)
+                {
+                    defaultPageName = Configuration.RedirectionDefaultPageName;
+                    content = LoadDefaultPage(defaultPageName);
+                    response = new Response(StatusCode.Redirect,contentType,content,redirectUri);
+                    return response;
+                }
                 //TODO: check file exists
-
+                physicalPath = Configuration.RootPath +"\\"+ request.relativeURI;
+                if(!File.Exists(physicalPath))
+                {
+                    defaultPageName = Configuration.NotFoundDefaultPageName;
+                    content = LoadDefaultPage(defaultPageName);
+                    response = new Response(StatusCode.NotFound,contentType,content,string.Empty);
+                    return response;
+                }
                 //TODO: read the physical file
-                content = LoadDefaultPage(defaultPageName);
+ 
+                content = LoadDefaultPage(request.relativeURI);
                 // Create OK response
-                Response response = new Response("OK",,content,redirectionPath);
+                response = new Response(StatusCode.OK,contentType,content,string.Empty);
             }
             catch (Exception ex)
             {
                 // TODO: log exception using Logger class
                 // TODO: in case of exception, return Internal Server Error. 
                 Logger.LogException(ex);
-                
+                Console.WriteLine(ex.Message);
+                defaultPageName = Configuration.InternalErrorDefaultPageName;
+                content = LoadDefaultPage(defaultPageName);
+                response = new Response(StatusCode.InternalServerError,contentType,content,string.Empty);
             }
+            return response;
         }
 
         private string GetRedirectionPagePathIFExist(string relativePath)
@@ -124,6 +148,7 @@ namespace HTTPServer
         private string LoadDefaultPage(string defaultPageName)
         {// new did
             string filePath = Path.Combine(Configuration.RootPath, defaultPageName);
+            Console.WriteLine(filePath);
              // TODO: check if filepath not exist log exception using Logger class and return empty string
                                          
             if (!File.Exists(filePath))
