@@ -103,19 +103,31 @@ namespace HTTPServer
         }
 
         private string GetRedirectionPagePathIFExist(string relativePath)
-        {
+        {//new did
             // using Configuration.RedirectionRules return the redirected page path if exists else returns empty
+            if (Configuration.RedirectionRules.ContainsKey(relativePath))
+                return Configuration.RedirectionRules[relativePath];
             
+
             return string.Empty;
         }
 
         private string LoadDefaultPage(string defaultPageName)
-        {
+        {// new did
             string filePath = Path.Combine(Configuration.RootPath, defaultPageName);
-            // TODO: check if filepath not exist log exception using Logger class and return empty string
-            
+             // TODO: check if filepath not exist log exception using Logger class and return empty string
+                                         
+            if (!File.Exists(filePath))
+            {
+                Logger.LogException(new Exception());
+                return string.Empty;
+            }
             // else read file and return its content
-            return string.Empty;
+            FileStream files = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            StreamReader streams = new StreamReader(files);
+            string Content = streams.ReadToEnd();
+            
+            return Content;
         }
 
         private void LoadRedirectionRules(string filePath)

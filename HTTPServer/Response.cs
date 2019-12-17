@@ -47,11 +47,33 @@ namespace HTTPServer
         }
 
         private string GetStatusLine(StatusCode code)
-        {
+        { // new did
             // TODO: Create the response status line and return it
+            
             string statusLine = string.Empty;
-
+          
+            if (StatusCode.OK == code)
+            {
+                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "OK";
+            }
+            else if (StatusCode.BadRequest == code)
+            {
+                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "BadRequest";
+            }
+            else if (StatusCode.NotFound == code)
+            {
+                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "NotFound";
+            }
+            else if (StatusCode.InternalServerError == code)
+            {
+                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "InternalServerError";
+            }
+            else if (StatusCode.Redirect == code)
+            {
+                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "Redirect";
+            }
             return statusLine;
+            
         }
     }
 }
