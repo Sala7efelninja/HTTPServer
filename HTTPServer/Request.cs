@@ -48,7 +48,7 @@ namespace HTTPServer
 
             //TODO: parse the receivedRequest using the \r\n delimeter   
             requestLines = requestString.Replace("\r\n", "\n").Split("\n".ToCharArray());
-            Console.WriteLine(requestString);
+            //Console.WriteLine(requestString);
             // check that there is atleast 3 lines: Request line, Host Header, Blank line (usually 4 lines with the last empty line for empty content)
             if (requestLines.Length >= 3)
             {
@@ -127,7 +127,8 @@ namespace HTTPServer
                 {
                     method = RequestMethod.HEAD;
                 }
-                relativeURI = requestLine[1];
+                relativeURI = requestLine[1].Split('/')[1];
+
                 if (ValidateIsURI(relativeURI) == false)
                 {
                     return false;
