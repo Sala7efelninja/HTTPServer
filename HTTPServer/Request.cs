@@ -48,6 +48,7 @@ namespace HTTPServer
 
             //TODO: parse the receivedRequest using the \r\n delimeter   
             requestLines = requestString.Replace("\r\n", "\n").Split("\n".ToCharArray());
+            Console.WriteLine(requestString);
             // check that there is atleast 3 lines: Request line, Host Header, Blank line (usually 4 lines with the last empty line for empty content)
             if (requestLines.Length >= 3)
             {
@@ -64,9 +65,9 @@ namespace HTTPServer
                         if (f == true)
                         {
                             int ind = -1;
-                            for (int i = 1; i <= requestLines.Length; i++)
+                            for (int i = 1; i < requestLines.Length; i++)
                             {
-                                if (requestLines[i] == "\n")
+                                if (requestLines[i] == "")
                                 {
                                     ind = i;
                                     break;
@@ -74,7 +75,8 @@ namespace HTTPServer
 
                             }
                             int k = 0;
-                            for (int i = ind + 1; i <= requestLines.Length; i++)
+                            contentLines = new string[requestLines.Length-ind-1];
+                            for (int i = ind + 1; i < requestLines.Length; i++)
                             {
                                 contentLines[k] = requestLines[i];
                                 k++;
@@ -158,15 +160,16 @@ namespace HTTPServer
         private bool LoadHeaderLines()
         {
             int ind = -1;
-            for (int i = 1; i <= requestLines.Length; i++)
+            for (int i = 1; i < requestLines.Length; i++)
             {
-                if (requestLines[i] == "\n")
+                if (requestLines[i] == "")
                 {
                     ind = i;
                     break;
                 }
 
             }
+            headerLines = new Dictionary<string, string>();
             bool f = false;
             for (int i = 1; i < ind; i++)
             {
@@ -190,9 +193,9 @@ namespace HTTPServer
         private bool ValidateBlankLine()
         {
             int ind = -1;
-            for (int i = 0; i <= requestLines.Length; i++)
+            for (int i = 0; i < requestLines.Length; i++)
             {
-                if (requestLines[i] == "\n")
+                if (requestLines[i] == "")
                 {
                     ind = i;
                 }
