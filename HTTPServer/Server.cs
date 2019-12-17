@@ -79,26 +79,35 @@ namespace HTTPServer
 
         Response HandleRequest(Request request)
         {
-            throw new NotImplementedException();
+            
             string content;
+            string defaultPageName;
+            
             try
             {
                 //TODO: check for bad request 
-
+                if(request.ParseRequest()==false)
+                {
+                   defaultPageName = Configuration.BadRequestDefaultPageName;
+                }
                 //TODO: map the relativeURI in request to get the physical path of the resource.
-
+                
                 //TODO: check for redirect
-
+                LoadRedirectionRules();
+                string redirectionPath = GetRedirectionPagePathIFExist(request.relativeURI);
                 //TODO: check file exists
 
                 //TODO: read the physical file
-
+                content = LoadDefaultPage(defaultPageName);
                 // Create OK response
+                Response response = new Response("OK",,content,redirectionPath);
             }
             catch (Exception ex)
             {
                 // TODO: log exception using Logger class
                 // TODO: in case of exception, return Internal Server Error. 
+                Logger.LogException(ex);
+                
             }
         }
 
