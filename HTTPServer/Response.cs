@@ -18,8 +18,8 @@ namespace HTTPServer
 
     class Response
     {
-        string br="/r/n";
-        string responseString;
+        string br="\r\n";
+        private string responseString;
         public string ResponseString
         {
             get
@@ -51,27 +51,8 @@ namespace HTTPServer
             // TODO: Create the response status line and return it
             
             string statusLine = string.Empty;
-          
-            if (StatusCode.OK == code)
-            {
-                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "OK";
-            }
-            else if (StatusCode.BadRequest == code)
-            {
-                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "BadRequest";
-            }
-            else if (StatusCode.NotFound == code)
-            {
-                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "NotFound";
-            }
-            else if (StatusCode.InternalServerError == code)
-            {
-                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "InternalServerError";
-            }
-            else if (StatusCode.Redirect == code)
-            {
-                statusLine = Configuration.ServerHTTPVersion + " " + code + " " + "Redirect";
-            }
+            statusLine = Configuration.ServerHTTPVersion + " " + (int)code + " " + code;
+
             return statusLine;
             
         }
