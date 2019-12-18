@@ -108,7 +108,7 @@ namespace HTTPServer
                     return response;
                 }
                 //TODO: check file exists
-                physicalPath = Path.Combine(Configuration.RootPath +"\\"+ request.relativeURI);
+                physicalPath = Configuration.RootPath +"\\"+ request.relativeURI;
                 if(!File.Exists(physicalPath))
                 {
                     defaultPageName = Configuration.NotFoundDefaultPageName;
@@ -183,6 +183,7 @@ namespace HTTPServer
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                Logger.LogException(ex);
                 Environment.Exit(1);
             }
         }
